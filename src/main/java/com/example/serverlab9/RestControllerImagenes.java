@@ -1,6 +1,10 @@
 package com.example.serverlab9;
 
 
+import com.example.serverlab9.Entities.Imagenes;
+import com.example.serverlab9.Entities.Usuario;
+import com.example.serverlab9.Repositorios.ImagenesRepository;
+import com.example.serverlab9.Repositorios.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,6 +25,8 @@ import java.util.HashMap;
 public class RestControllerImagenes {
         @Autowired
         ImagenesRepository imagenesRepository;
+        @Autowired
+        UsuarioRepository usuarioRepository;
 
         @GetMapping("imagenes/{id}")
         public ResponseEntity<byte[]> mostrarImagenUser(@PathVariable("id") int id2) {
@@ -37,16 +43,19 @@ public class RestControllerImagenes {
                                 HttpStatus.OK);
                 } else {
                         return null;
-                }
-    @Autowired
-    UsuarioRepository usuarioRepository;
+                }}
 
-    @PostMapping("/usuario/obtener")
-    public ResponseEntity<HashMap<String, Object>> obtenerUsuarioPorNombreContras(@RequestParam("nombre") String nombre,
-                                                                  @RequestParam("contrasenia") String contrasenia){
-        HashMap<String, Object> responseMap = new HashMap<>();
-        Usuario u= usuarioRepository.validarUsuario(nombre, contrasenia);
-        responseMap.put("Usuario", u);
-        return ResponseEntity.status(HttpStatus.OK).body(responseMap);
-    }
+
+        @PostMapping("/usuario/obtener")
+        public ResponseEntity<HashMap<String, Object>> obtenerUsuarioPorNombreContras(@RequestParam("nombre") String nombre,
+                                                                      @RequestParam("contrasenia") String contrasenia){
+            HashMap<String, Object> responseMap = new HashMap<>();
+            Usuario u = usuarioRepository.validarUsuario(nombre, contrasenia);
+            if(u!=null){
+                 responseMap.put("Usuario", u);
+            }else{
+                    responseMap.put("error", "no existe");
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(responseMap);
+        }
 }
